@@ -11,7 +11,7 @@ import SwiftUI
 struct ArticleListPracticeApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(articleViewModel: ArticleViewModel())
         }
     }
 }
