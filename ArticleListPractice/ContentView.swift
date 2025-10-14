@@ -22,44 +22,69 @@ struct ContentView: View {
             .foregroundStyle(.blue)
         
         List(articleViewModel.articleList, id: \.self) { article in
-            RowCell(author: article.author, description: article.description, image: article.urlToImage, date: "12323")
+            RowCell(author: article.author, description: article.description, imageURL: article.urlToImage, date: String(article.publishedAt?.prefix(10) ?? ""))
         }
         .listStyle(.insetGrouped)
         .task{
             await articleViewModel.getDataFromServer()
         }
     }
-    
 }
 
 struct RowCell: View {
-    
     var author: String?
     var description: String?
-    var image: String?
+    var imageURL: String?
     var date: String?
-    
+
+    @State private var uiImage: UIImage?
+
     var body: some View {
-        HStack {
-            VStack (alignment: .leading, spacing: 10) {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 10) {
                 Text(author ?? "")
                     .foregroundStyle(.blue)
                     .bold()
                 Text(description ?? "")
                     .foregroundStyle(.gray)
-                HStack() {
+                HStack(spacing: 6) {
                     Image(systemName: "square.and.arrow.up")
                         .foregroundStyle(.blue)
                     Text(date ?? "")
                         .foregroundStyle(.gray)
                 }
             }
-            Image(systemName: image ?? "figure.wave")
-                .resizable()
-                .frame(width: 80, height: 80)
-                .aspectRatio(contentMode: .fill)
+            Spacer()
+            Group {
+                if let img = uiImage {
+                    Image(uiImage: img)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else {
+                    Image(systemName: "photo.trianglebadge.exclamationmark.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                }
+            }
+            .frame(width: 100, height: 100)
+            .clipped()
+            .cornerRadius(8)
         }
-       
+        .task(id: imageURL) {
+            await fetchImage()
+        }
+    }
+    
+    @MainActor
+    private func fetchImage() async {
+        let state = await NetworkManager.shared.getData(from: imageURL)
+        switch state {
+        case .success(let data):
+            uiImage = UIImage(data: data)
+            break
+        case .errorFetchingData, .isLoading, .invalidURL, .noDataFromServer:
+            uiImage = nil
+        }
     }
 }
 

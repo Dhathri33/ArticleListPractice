@@ -26,7 +26,6 @@ class ArticleViewModel: ArticleViewModelProtocol, ObservableObject {
         
     func getDataFromServer() async {
         let fetchedState = await networkManager.getData(from: Server.endPoint.rawValue)
-        
         switch fetchedState {
         case .isLoading, .invalidURL, .errorFetchingData, .noDataFromServer:
             errorState = fetchedState

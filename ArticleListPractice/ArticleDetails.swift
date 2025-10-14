@@ -11,6 +11,7 @@ struct ArticleDetails: Decodable, Hashable {
     let author: String?
     let description: String?
     let urlToImage: String?
+    let publishedAt: String?
 }
 
 struct ArticleList: Decodable {
