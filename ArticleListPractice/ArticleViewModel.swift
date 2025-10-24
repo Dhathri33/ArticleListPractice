@@ -14,9 +14,10 @@ protocol ArticleViewModelProtocol {
     func getDataFromServer() async
 }
 
-class ArticleViewModel: ArticleViewModelProtocol, ObservableObject {
+@Observable
+class ArticleViewModel: ArticleViewModelProtocol {
     
-    @Published var articleList: [ArticleDetails] = []
+    var articleList: [ArticleDetails] = []
     private let networkManager: NetworkManagerProtocol
     var errorState: NetworkState?
     

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @ObservedObject var articleViewModel: ArticleViewModel
+    var articleViewModel: ArticleViewModel
     
     init(articleViewModel: ArticleViewModel) {
         self.articleViewModel = articleViewModel
